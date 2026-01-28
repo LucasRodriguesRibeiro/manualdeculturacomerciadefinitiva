@@ -50,7 +50,7 @@ const BuyButton = ({ showPrice = false }: { showPrice?: boolean }) => (
       </div>
     )}
     <a
-      href="[LINK_CHECKOUT]"
+      href="https://pay.hotmart.com/C104133503E"
       className="relative group bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black text-xl md:text-3xl py-7 px-12 rounded-2xl w-full text-center flex items-center justify-center gap-4 shadow-[0_20px_60px_-15px_rgba(249,115,22,0.5)] hover:shadow-[0_20px_80px_-15px_rgba(249,115,22,0.7)] transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
     >
       <span className="relative z-10">QUERO MEU MANUAL AGORA</span>
