@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   CheckCircle2,
   Clock,
@@ -25,9 +25,33 @@ import {
 
 // --- Shared Components ---
 
+// Barra de Urgência Fixa
+const UrgencyBanner = () => (
+  <div className="sticky top-0 z-50 bg-gradient-to-r from-red-600 to-red-800 text-white text-center py-3 px-4 shadow-lg flex items-center justify-center gap-2 font-bold text-xs md:text-sm tracking-wide uppercase">
+    <Zap size={16} className="text-yellow-300 animate-pulse" fill="currentColor" />
+    <span>Oferta Especial: Acesso Imediato + Garantia de 7 Dias</span>
+  </div>
+);
+
+// Notificação de Prova Social
+const SocialProofToast = ({ name, visible }: { name: string; visible: boolean }) => {
+  if (!visible) return null;
+  return (
+    <div className={`fixed bottom-4 left-4 z-50 flex items-center gap-3 bg-slate-900 border border-slate-700/50 p-4 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] max-w-[300px] ${visible ? 'animate-slide-in-left' : 'animate-slide-out-left'}`}>
+      <div className="bg-green-500/10 p-2 rounded-full border border-green-500/20 shrink-0">
+        <CircleCheck size={20} className="text-green-500" />
+      </div>
+      <div>
+        <p className="text-gray-100 font-bold text-sm">{name}</p>
+        <p className="text-green-400 text-xs font-medium">acabou de comprar o manual!</p>
+      </div>
+    </div>
+  );
+};
+
 const Section = ({ id, children, className = "", dark = true }: { id: string, children?: React.ReactNode, className?: string, dark?: boolean }) => (
-  <section id={id} className={`py-16 px-4 md:py-24 ${dark ? 'bg-gradient-to-b from-slate-950 to-slate-900' : 'bg-gradient-to-b from-slate-900 to-slate-950'} ${className}`}>
-    <div className="max-w-6xl mx-auto">
+  <section id={id} className={`py-12 px-6 md:py-16 ${dark ? 'bg-gradient-to-b from-slate-950 to-slate-900' : 'bg-gradient-to-b from-slate-900 to-slate-950'} ${className}`}>
+    <div className="max-w-[1000px] mx-auto">
       {children}
     </div>
   </section>
@@ -36,31 +60,31 @@ const Section = ({ id, children, className = "", dark = true }: { id: string, ch
 const BuyButton = ({ showPrice = false }: { showPrice?: boolean }) => (
   <div className="flex flex-col items-center gap-6 w-full max-w-xl mx-auto">
     {showPrice && (
-      <div className="text-center w-full bg-gradient-to-r from-orange-500/10 via-orange-500/5 to-orange-500/10 p-8 rounded-3xl border border-orange-500/20">
-        <p className="text-gray-500 line-through text-base mb-2 uppercase tracking-wider font-bold">De R$ 502,00 por apenas</p>
-        <div className="flex items-baseline justify-center gap-3 mb-3">
-          <span className="text-3xl font-black text-gray-400">12x de</span>
-          <span className="text-6xl md:text-8xl font-black bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">R$ 6,73</span>
+      <div className="text-center w-full bg-gradient-to-r from-orange-500/10 via-orange-500/5 to-orange-500/10 p-6 rounded-3xl border border-orange-500/20">
+        <p className="text-gray-500 line-through text-sm mb-2 uppercase tracking-wider font-bold">De R$ 502,00 por apenas</p>
+        <div className="flex items-baseline justify-center gap-3 mb-2">
+          <span className="text-2xl font-black text-gray-400">12x de</span>
+          <span className="text-5xl md:text-6xl font-black bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">R$ 6,73</span>
         </div>
-        <p className="text-xl text-orange-400 font-bold">Ou R$ 67,00 à vista no PIX</p>
-        <div className="mt-4 flex items-center justify-center gap-2 text-sm text-orange-300/80">
-          <Sparkles size={16} />
+        <p className="text-lg text-orange-400 font-bold">Ou R$ 67,00 à vista no PIX</p>
+        <div className="mt-3 flex items-center justify-center gap-2 text-xs text-orange-300/80">
+          <Sparkles size={14} />
           <span className="font-semibold">Oferta por tempo limitado</span>
         </div>
       </div>
     )}
     <a
       href="https://pay.hotmart.com/C104133503E"
-      className="relative group bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black text-xl md:text-3xl py-7 px-12 rounded-2xl w-full text-center flex items-center justify-center gap-4 shadow-[0_20px_60px_-15px_rgba(249,115,22,0.5)] hover:shadow-[0_20px_80px_-15px_rgba(249,115,22,0.7)] transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
+      className="relative group bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold text-lg md:text-xl py-5 px-10 rounded-full w-full text-center flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(249,115,22,0.4)] hover:shadow-[0_15px_40px_rgba(249,115,22,0.6)] transition-all duration-300 transform hover:-translate-y-1 active:scale-[0.98]"
     >
       <span className="relative z-10">QUERO MEU MANUAL AGORA</span>
-      <ArrowRight className="relative z-10 group-hover:translate-x-2 transition-transform" size={28} />
-      <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-500 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity"></div>
+      <ArrowRight className="relative z-10 group-hover:translate-x-1 transition-transform" size={24} />
+      <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full blur-md opacity-40 group-hover:opacity-60 transition-opacity"></div>
     </a>
-    <div className="flex flex-wrap justify-center gap-6 text-xs md:text-sm font-bold uppercase tracking-widest text-gray-400">
-      <span className="flex items-center gap-2"><Lock size={16} className="text-green-500" /> Compra 100% Segura</span>
-      <span className="flex items-center gap-2"><ShieldCheck size={16} className="text-green-500" /> Garantia de 7 Dias</span>
-      <span className="flex items-center gap-2"><Zap size={16} className="text-orange-500" /> Acesso Imediato</span>
+    <div className="flex flex-wrap justify-center gap-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-gray-400">
+      <span className="flex items-center gap-1.5"><Lock size={14} className="text-green-500" /> Compra 100% Segura</span>
+      <span className="flex items-center gap-1.5"><ShieldCheck size={14} className="text-green-500" /> Garantia de 7 Dias</span>
+      <span className="flex items-center gap-1.5"><Zap size={14} className="text-orange-500" /> Acesso Imediato</span>
     </div>
   </div>
 );
@@ -75,8 +99,44 @@ const WhatsAppBubble = ({ text }: { text: string }) => (
 // --- App Principal ---
 
 const App: React.FC = () => {
+  const [notification, setNotification] = useState({ name: '', visible: false });
+
+  useEffect(() => {
+    const buyers = [
+      "Carlos Silva", "Ana Paula", "Roberto Santos", "Maria Oliveira",
+      "João Pedro", "Fernanda Costa", "Lucas Mendes", "Juliana Almeida",
+      "Marcos Souza", "Patrícia Lima", "Rafael Oliveira", "Camila Santos",
+      "Bruno Ferreira", "Amanda Rodrigues", "Felipe Martins", "Larissa Gomes",
+      "Diego Nascimento", "Vanessa Pereira", "Thiago Costa", "Bianca Ribeiro"
+    ];
+
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const showNotification = () => {
+      // Pick random name
+      const name = buyers[Math.floor(Math.random() * buyers.length)];
+      setNotification({ name, visible: true });
+
+      // Hide after 3.5s
+      setTimeout(() => {
+        setNotification(prev => ({ ...prev, visible: false }));
+      }, 3500);
+
+      // Schedule next notification (random 8s - 20s)
+      const nextTime = Math.random() * 12000 + 8000;
+      timeoutId = setTimeout(showNotification, nextTime);
+    };
+
+    // First appearance after 5s
+    timeoutId = setTimeout(showNotification, 5000);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-950 text-white selection:bg-orange-500 selection:text-white antialiased">
+      <UrgencyBanner />
+      <SocialProofToast name={notification.name} visible={notification.visible} />
 
       {/* DOBRA 1: Headline */}
       <Section id="dobra-1" className="text-center pt-20 md:pt-32 overflow-hidden relative">
@@ -86,18 +146,18 @@ const App: React.FC = () => {
           <Award size={18} className="animate-pulse" /> Manual de Cultura Comercial
         </div>
 
-        <h1 className="text-5xl md:text-8xl font-black leading-[1.05] mb-8 tracking-tight">
+        <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-6 tracking-tight">
           Organize, alinhe e faça<br />sua equipe <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">vender mais</span>.
         </h1>
 
-        <p className="text-xl md:text-3xl text-gray-300 max-w-4xl mx-auto mb-16 leading-relaxed font-medium">
+        <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-10 leading-relaxed font-medium">
           O manual de cultura comercial definitivo, pronto para aplicar e acabar com a bagunça <span className="text-orange-400 font-bold">em 48h</span>.
         </p>
 
         {/* Mockup */}
-        <div className="relative mx-auto w-full max-w-5xl group cursor-default mb-12">
-          <div className="absolute -inset-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-[48px] blur-[80px] opacity-20 group-hover:opacity-30 transition duration-1000"></div>
-          <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-[32px] border border-slate-700/50 overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.7)] transform transition-transform group-hover:scale-[1.01]">
+        <div className="relative mx-auto w-full max-w-4xl group cursor-default mb-8">
+          <div className="absolute -inset-6 bg-gradient-to-r from-orange-500 to-orange-600 rounded-[32px] blur-[60px] opacity-15 group-hover:opacity-25 transition duration-1000"></div>
+          <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl border border-slate-700/50 overflow-hidden shadow-2xl transform transition-transform group-hover:scale-[1.005]">
             <img
               src="/images/full-stack.png"
               alt="Manual de Cultura Comercial + Bônus"
